@@ -18,7 +18,8 @@ Read this section first. This document keeps what I verified separate from what 
 | Logged-in home screen | **Verified** | Candidate's screenshots, 2026-11-19 |
 | Adding a crush (form) | **Verified** (viewed; nothing submitted) | Candidate's screenshots, 2026-11-19 |
 | Invite link ("Get a slot free") | **Verified** | Candidate's screenshots, 2026-11-19 |
-| Email verification, extra-slots screen | **Not yet verified** | Needs the settings and "Get more slots" screens |
+| Extra-slots screen (`/buy`) | **Verified** (viewed; nothing purchased) | Candidate's screenshots, 2026-11-19 |
+| Settings, including the email entry point | **Verified** | Candidate's screenshots, 2026-11-19. The email verification step after tapping "Add" was not opened |
 
 The automated part of this analysis read public pages only: no sign-up, no phone number, no purchase. The logged-in observations come from the candidate's own account.
 
@@ -63,13 +64,40 @@ Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spend
 - It shows a personal invite code with a copy button, a **Copy link** action, and a primary **Share link** button. Progress shows as three circles: "0 of 3 joined".
 - **Observation**: the reward needs friends to *join and add a crush*, not just sign up. That rewards real activity rather than empty sign-ups, which is a sound incentive. Progress shows a count but not *which* friends joined, which is consistent with Coy's privacy stance.
 
+### Extra-slots screen: `app.getcoy.com/buy` (verified; nothing purchased)
+- Heading **"Get more slots"** with a **LAUNCH OFFER** badge, and the line *"You're using 0 of 3. Extra slots are yours to keep."*
+- Three packs, each with a struck-through "was" price:
+  - **+1 crush**: ~~₹199~~ **₹49** (₹49 each)
+  - **+3 crushes**: ~~₹499~~ **₹129** (₹43 each). **Pre-selected and highlighted.**
+  - **+5 crushes**: ~~₹799~~ **₹199** (₹40 each), tagged **"Best value"**
+- The CTA reads **"Pay ₹129"** (it follows the selection), with *"UPI, cards and wallets via Cashfree. Prices include GST."*
+- Below that is an **"Or get one free"** card, which repeats the invite flow.
+
+**Observations**
+9. **The upsell comes before any value.** The page says "You're using 0 of 3". Someone who hasn't used a single free slot is still shown three paid packs. A gentler sequence would offer extra slots once the free ones are actually in use.
+10. **The "Best value" tag is ambiguous.** It sits on the border between the selected +3 card and the +5 card, so it can read as belonging to +3. The default selection (+3) isn't the pack labelled best value (+5). Both are common upsell patterns, but they slightly muddle the choice.
+11. **Prices are anchored to "was" prices.** For a product at launch, a struck-through "was ₹199" has no real sales history behind it. That's worth being careful with for user trust (and consumer-protection guidance on reference pricing).
+12. **Good:** the payment method and GST-inclusive pricing are stated up front, the slots are a one-time purchase ("yours to keep") rather than a subscription, and the free alternative sits on the same page.
+
+### Settings: `app.getcoy.com/settings` (verified)
+- **First name** (with Change), **Your number** (shown, not editable), and **Email** with an **Add** button: *"Add it so people who only have your email can find you."*
+- An **Alerts** toggle (on): *"When someone new adds you, or it's a match."*
+- An **Invite link** in the form `app.getcoy.com/i/<code>`, with Copy.
+- **Log out** and **Delete account** (in red), plus footer links: Terms, Privacy, Refunds and Cancellations, Stop messages, Contact, © Fiquity Technology Pvt Ltd.
+
+**Observations**
+13. **Email is opt-in for findability, and most people will skip it.** The framing is honest ("so people who only have your email can find you"), but it's buried in Settings. Anyone who adds a crush *by email* only matches if that crush has added their email here. Nudging users to add an email (e.g. right after their first add) would raise match rates, and it ties in with observation 6.
+14. **The phone number can't be changed.** If someone changes their number, they can't move their account (and their list) across. Worth a supported "change number" flow, re-verified by OTP.
+15. **Privacy nuance in alerts.** An alert for every "someone new adds you" lets a user count roughly how many people have added them over time. Coy's stated cap (at most 3 messages in total, one a week) bounds this, but it sits awkwardly next to "we never say who… not through counts". Batching alerts or capping them visibly would keep the promise airtight.
+16. **Good:** deleting your account is one tap away, not hidden, which matches the DPDP-style commitments in the privacy policy.
+
 ### Checklist: complete after personally exploring Coy
 - [x] Phone OTP login: completed (logged in). Optional: note the code delivery time and the resend behaviour.
 - [x] Adding a crush (viewed, not submitted): is it by phone or email, what name/label is asked for, and what confirmation does "adding is final" get?
-- [ ] Email verification: when is it asked for, how is the code or link delivered, and is it explained that it makes you findable?
+- [x] Email verification: the entry point is in Settings ("Add"), framed as findability. Optional: tap Add to note how the code or link is delivered.
 - [x] Invite link: how it is shared, what the invitee sees, and how progress toward a free slot is shown.
-- [ ] Extra-slots screen: look at the price presentation, the payment hand-off, and anything confusing. **Do not buy.**
-- [ ] Revisit the two proposals below and keep, adjust or replace them based on what you saw.
+- [x] Extra-slots screen: viewed `/buy`, nothing purchased.
+- [x] Revisit the two proposals: both kept. The in-app evidence supports them (see "Evidence from the app" under each).
 
 ## 2. Feature 1: Verified Circles (add a crush without having their number)
 
@@ -77,7 +105,7 @@ Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spend
 
 **Why it's required.** Today the product only works for crushes you already have contact details for, which caps both matches and growth. Coy already collects an optional email "so people who have it can find you". A verified college or work email domain is a natural, privacy-preserving next step.
 
-**Evidence from the app.** The Add a crush form accepts only a phone number or an email (observation 8), and the login screen says your number is "how your crushes find you". If you don't have someone's contact details, there is no way to add them.
+**Evidence from the app.** The Add a crush form accepts only a phone number or an email (observation 8), and the login screen says your number is "how your crushes find you". If you don't have someone's contact details, there is no way to add them. Settings already has an Email row (observation 13), so verifying a *college or work* email there is a natural extension of a screen that already exists.
 
 **Flow.**
 1. In settings, a user verifies a college or work email (e.g. `@iitb.ac.in`). This joins them to the "IIT Bombay" circle.
@@ -99,7 +127,7 @@ Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spend
 
 **Why it's required.** Scarcity is good for seriousness, but anxiety about wasting a slot suppresses the core action (adding). That pushes people either to churn or to a paywall before they've had a match. A built-in, predictable expiry gives back control without opening the add/remove "probe" loophole that "adding is final" exists to prevent.
 
-**Evidence from the app.** The home screen leads with "0/3", empty slots and a paid "Get more slots" card (observations 1 and 2), and the add form warns "Adding is final: you can't remove someone" (observation 7). Every slot feels high-stakes.
+**Evidence from the app.** The home screen leads with "0/3", empty slots and a paid "Get more slots" card (observations 1 and 2), the add form warns "Adding is final: you can't remove someone" (observation 7), and `/buy` upsells extra slots before any free slot is used (observation 9). Every slot feels high-stakes.
 
 **Flow.**
 1. When adding a crush, choose a duration: 30, 60 or 90 days (default 90).

@@ -8,7 +8,7 @@ You are continuing the **Coy SDE intern assignment**. The repo is `coy-discover/
 
 **Assignment**: see `docs/assignment.md` (a transcription; the original PDF should be copied to `docs/assignment.pdf`). Part A is a product analysis of getcoy.com with two feature proposals. Part B is a swipe-based "Discover" tab: 30+ seeded profiles, some of which have already liked the user; drag or buttons to like/pass; never show a swiped profile again; an "It's a match!" screen on mutual likes; a Matches view; never reveal who liked the user unless it's mutual; APIs for feed, swipe and matches; persistence.
 
-**State**: Part B is complete and verified. Part A is written from public pages only, with a checklist for the human to complete after exploring the logged-in app. Not deployed.
+**State**: Part B is complete and verified. Part A is complete: all five flows are documented from the candidate's screenshots (no personal data such as phone, name or invite code in the repo). Not deployed.
 
 **Stack**: Next.js 15 App Router + Route Handlers, React 19, TS, Tailwind 4, Framer Motion, Prisma 6 + SQLite, Zod 4, Vitest 5 + RTL, Playwright. GitHub: https://github.com/Aman13082001/coy-discover (public, `master`).
 
@@ -31,7 +31,7 @@ npm run db:seed         # reset demo data
 Note: Prisma blocks `prisma migrate reset` when run by an AI agent. Don't bypass it. Tests don't need it.
 
 **Remaining**
-1. (Human) Explore app.getcoy.com and complete the checklist in `docs/COY_PRODUCT_ANALYSIS.md`.
+1. (Optional) Document the email verification step (Settings → Email → Add).
 2. (Optional) Deploy: Neon Postgres + Vercel (README → Deployment, DATABASE.md → Switching to PostgreSQL). Verify the live URL before claiming it.
 3. Copy the original PDF to `docs/assignment.pdf`.
 

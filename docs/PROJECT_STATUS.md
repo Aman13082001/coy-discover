@@ -3,7 +3,7 @@
 _Last updated: 2026-11-19_
 
 ## Overall
-Part B (Discover app) is **complete and verified locally**. Part A: login, home screen, the add-a-crush form and the invite link are documented from the candidate's screenshots; email verification and the extra-slots screen are still to be written up. See the checklist in [COY_PRODUCT_ANALYSIS.md](COY_PRODUCT_ANALYSIS.md).
+Part B (Discover app) is **complete and verified locally**. Part A: **complete**. All five required flows (login, adding a crush, email, invite link, extra slots) are documented from the candidate's screenshots, with 16 observations and two feature proposals. See the checklist in [COY_PRODUCT_ANALYSIS.md](COY_PRODUCT_ANALYSIS.md).
 
 | Phase | Status |
 |---|---|
@@ -15,7 +15,7 @@ Part B (Discover app) is **complete and verified locally**. Part A: login, home 
 | 10–11 Component tests, E2E user journey | Done |
 | 12 Responsive and visual refinement (360 px, tablet, desktop screenshots reviewed) | Done |
 | 13 Independent security/privacy review: no leaks found; 5 bugs found and fixed (see log) | Done |
-| 14 Part A analysis | Done (public pages only) |
+| 14 Part A analysis | Done (public pages + candidate screenshots of all five flows) |
 | 15 Documentation | Done |
 | 16 GitHub | Done: https://github.com/Aman13082001/coy-discover (public, branch `master`). A fresh clone was verified: `npm ci` → `npm run setup` → 80 tests pass |
 | 17 Deployment | **Not done**: no hosting credentials (no Vercel CLI/login, no hosted Postgres) |
@@ -40,5 +40,5 @@ Nothing known.
 - `npm audit` still reports two high-severity advisories that only major upgrades fix, and that don't touch runtime request data: `postcss` inside Next 15 (build-time processing of our own CSS; fixed in Next 16) and `deepmerge-ts` in the Prisma 6 CLI config loader (dev tooling; fixed in Prisma 7). The `zod` advisory was fixed by upgrading to Zod 4.
 
 ## Immediate next action
-1. Explore Coy yourself and complete the Part A checklist.
+1. (Optional) In Settings, tap Email → Add to see the verification step, and note it in Part A.
 2. Optionally deploy: create a Neon Postgres DB, switch the provider, and import into Vercel (README → Deployment).
