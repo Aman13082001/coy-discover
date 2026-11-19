@@ -43,16 +43,37 @@ describe("privacy: incoming likes are never exposed", () => {
     expect((await callMatches()).body).toEqual(withLikes);
   });
 
-  it("no response contains like-related fields anywhere", async () => {
-    const forbidden = /liked|likes|incoming|admirer|interested|count|swipedBy|action/i;
+  it("every response uses only allow-listed keys (no like-related fields anywhere)", async () => {
+    const allowed = new Set([
+      "data", "profiles", "matches", "swipe", "match", "profileId", "action", "createdAt", "profile",
+      "id", "name", "age", "photoUrl", "bio", "location", "interests",
+    ]);
     const responses = [
       (await callFeed()).body,
       (await callMatches()).body,
-      (await callSwipe({ profileId: NEUTRAL[0], action: "PASS" })).body.data.match,
+      (await callSwipe({ profileId: NEUTRAL[0], action: "PASS" })).body,
+      (await callSwipe({ profileId: LIKED_ME[0], action: "PASS" })).body,
+      (await callSwipe({ profileId: NEUTRAL[1], action: "LIKE" })).body,
+      (await callSwipe({ profileId: LIKED_ME[1], action: "LIKE" })).body,
+      (await callMatches()).body,
     ];
     for (const r of responses) {
-      for (const key of allKeys(r)) expect(key).not.toMatch(forbidden);
+      for (const key of allKeys(r)) expect(allowed.has(key), `unexpected key "${key}"`).toBe(true);
     }
+  });
+
+  it("repeat and conflicting swipes respond identically for likers and non-likers", async () => {
+    const strip = (body: unknown) => JSON.stringify(body).replaceAll(LIKED_ME[0], "X").replaceAll(NEUTRAL[0], "X");
+    for (const id of [LIKED_ME[0], NEUTRAL[0]]) await callSwipe({ profileId: id, action: "PASS" });
+    const repeatLiker = await callSwipe({ profileId: LIKED_ME[0], action: "PASS" });
+    const repeatNeutral = await callSwipe({ profileId: NEUTRAL[0], action: "PASS" });
+    expect(repeatLiker.status).toBe(repeatNeutral.status);
+    expect(strip(repeatLiker.body)).toBe(strip(repeatNeutral.body));
+    const conflictLiker = await callSwipe({ profileId: LIKED_ME[0], action: "LIKE" });
+    const conflictNeutral = await callSwipe({ profileId: NEUTRAL[0], action: "LIKE" });
+    expect(conflictLiker.status).toBe(409);
+    expect(conflictLiker.status).toBe(conflictNeutral.status);
+    expect(strip(conflictLiker.body)).toBe(strip(conflictNeutral.body));
   });
 
   it("feed ordering does not depend on who liked the user", async () => {

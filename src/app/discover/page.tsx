@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DiscoverScreen } from "@/components/discover/DiscoverScreen";
 import { getCurrentUserId } from "@/server/config";
-import { getProfile } from "@/server/services/matches";
+import { getProfile } from "@/server/services/profile";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Discover · Coy" };

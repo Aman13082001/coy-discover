@@ -19,7 +19,9 @@ export interface SwipeFeedback {
  */
 export function useSwipe(setProfiles: Dispatch<SetStateAction<PublicProfile[]>>) {
   const inFlight = useRef(new Set<string>());
-  const [match, setMatch] = useState<MatchSummary | null>(null);
+  const feedbackSeq = useRef(0);
+  // Queue, so two matches in quick succession each get their own "It's a match!" screen.
+  const [matchQueue, setMatchQueue] = useState<MatchSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<SwipeFeedback | null>(null);
   const [exitDirection, setExitDirection] = useState<1 | -1>(1);
@@ -31,15 +33,16 @@ export function useSwipe(setProfiles: Dispatch<SetStateAction<PublicProfile[]>>)
 
       setError(null);
       setExitDirection(action === "LIKE" ? 1 : -1);
-      setFeedback({ key: Date.now(), action, name: profile.name });
+      setFeedback({ key: ++feedbackSeq.current, action, name: profile.name });
       setProfiles((prev) => prev.filter((p) => p.id !== profile.id));
 
       try {
         const result = await api.swipe(profile.id, action);
-        if (result.match) setMatch(result.match);
+        const match = result.match;
+        if (match) setMatchQueue((q) => (q.some((m) => m.id === match.id) ? q : [...q, match]));
       } catch (e) {
-        // Already recorded (e.g. a retried request): the swipe exists, so keep the card gone.
-        // Profile no longer exists: nothing to restore.
+        // A conflicting earlier swipe exists, or the profile no longer exists: nothing to restore.
+        // (An identical retry is answered with 200 and its original result, handled above.)
         if (e instanceof ApiError && (e.code === "ALREADY_SWIPED" || e.code === "PROFILE_NOT_FOUND")) return;
         setProfiles((prev) => (prev.some((p) => p.id === profile.id) ? prev : [profile, ...prev]));
         setFeedback(null);
@@ -57,8 +60,8 @@ export function useSwipe(setProfiles: Dispatch<SetStateAction<PublicProfile[]>>)
 
   return {
     swipe,
-    match,
-    dismissMatch: useCallback(() => setMatch(null), []),
+    match: matchQueue[0] ?? null,
+    dismissMatch: useCallback(() => setMatchQueue((q) => q.slice(1)), []),
     error,
     dismissError: useCallback(() => setError(null), []),
     feedback,

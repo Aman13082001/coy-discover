@@ -133,3 +133,23 @@ test("360×640: card and both action buttons fit above the tab bar", async ({ pa
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("a failed swipe brings the card back on-screen (real animations)", async ({ page }) => {
+  await page.goto("/discover");
+  await expectTopCard(page, "Pooja");
+  const before = (await topCard(page).boundingBox())!;
+  await page.route("**/api/swipe", (route) =>
+    route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "x" } }) }),
+  );
+  await page.getByRole("button", { name: "Like Pooja" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "back on top" })).toContainText("Pooja is back on top");
+  await expectTopCard(page, "Pooja");
+  await page.waitForTimeout(900); // let any exit/re-enter animation settle
+  const after = (await topCard(page).boundingBox())!;
+  expect(Math.abs(after.x - before.x)).toBeLessThan(4);
+  expect(Math.abs(after.y - before.y)).toBeLessThan(4);
+  // The swipe was not lost: after the server recovers, the same card can be swiped.
+  await page.unroute("**/api/swipe");
+  await page.getByRole("button", { name: "Like Pooja" }).click();
+  await expectTopCard(page, "Rohan");
+});

@@ -28,12 +28,30 @@ const HEARTS = [
 export function MatchModal({ me, match, onKeepSwiping, onViewMatches }: Props) {
   const reduceMotion = useReducedMotion();
   const primaryRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const { profile } = match;
 
   useEffect(() => {
     primaryRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onKeepSwiping();
+      if (e.key === "Escape") {
+        onKeepSwiping();
+        return;
+      }
+      // Keep focus inside the dialog.
+      if (e.key !== "Tab" || !dialogRef.current) return;
+      const buttons = [...dialogRef.current.querySelectorAll<HTMLButtonElement>("button")];
+      if (buttons.length === 0) return;
+      const first = buttons[0];
+      const last = buttons[buttons.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !dialogRef.current.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !dialogRef.current.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -61,6 +79,7 @@ export function MatchModal({ me, match, onKeepSwiping, onViewMatches }: Props) {
       )}
 
       <motion.div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="match-title"

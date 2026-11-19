@@ -169,6 +169,83 @@ describe("DiscoverScreen", () => {
   });
 });
 
+describe("DiscoverScreen: review regressions", () => {
+  const MEERA = { ...ZOYA, id: "meera", name: "Meera", photoUrl: "/profiles/meera.jpg" };
+
+  it("queues two quick matches so each gets its own overlay", async () => {
+    const pending: Record<string, (r: Response) => void> = {};
+    mockFetch({
+      "/api/feed": feed(MEERA, ZOYA, ROHAN),
+      "/api/swipe": (_u, init) => {
+        const { profileId } = JSON.parse(String(init?.body));
+        return new Promise<Response>((r) => (pending[profileId] = r));
+      },
+    });
+    render(<DiscoverScreen me={ME} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Like Meera" }));
+    await userEvent.click(await screen.findByRole("button", { name: "Like Zoya" }));
+    const reply = (p: typeof ZOYA) =>
+      json(201, { data: { swipe: { profileId: p.id, action: "LIKE" }, match: makeMatch(p) } });
+    await act(async () => {
+      pending.meera(reply(MEERA));
+      pending.zoya(reply(ZOYA));
+    });
+
+    expect(await screen.findByText(/You and/)).toHaveTextContent("You and Meera liked each other.");
+    await userEvent.click(screen.getByRole("button", { name: "Keep discovering" }));
+    expect(await screen.findByText(/You and/)).toHaveTextContent("You and Zoya liked each other.");
+    await userEvent.click(screen.getByRole("button", { name: "Keep discovering" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("a held arrow key (auto-repeat) swipes only once", async () => {
+    const fetch = mockFetch({ "/api/feed": feed(POOJA, ROHAN, ZOYA), "/api/swipe": noMatch });
+    render(<DiscoverScreen me={ME} />);
+    await screen.findByRole("button", { name: "Like Pooja" });
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    fireEvent.keyDown(window, { key: "ArrowRight", repeat: true });
+    fireEvent.keyDown(window, { key: "ArrowRight", repeat: true });
+    await waitFor(() => expect(topCardName()).toMatch(/Rohan/));
+    expect(swipeCalls(fetch)).toEqual([{ profileId: "pooja", action: "LIKE" }]);
+  });
+
+  it("after a lost response, retrying the like still shows the match", async () => {
+    let call = 0;
+    mockFetch({
+      "/api/feed": feed(ZOYA, ROHAN),
+      "/api/swipe": () =>
+        ++call === 1
+          ? Promise.reject(new TypeError("Failed to fetch"))
+          : json(200, { data: { swipe: { profileId: "zoya", action: "LIKE" }, match: makeMatch(ZOYA) } }),
+    });
+    render(<DiscoverScreen me={ME} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Like Zoya" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Zoya is back on top");
+    await userEvent.click(screen.getByRole("button", { name: "Like Zoya" }));
+    expect(await screen.findByRole("dialog", { name: "It's a match!" })).toBeInTheDocument();
+  });
+
+  it("keeps keyboard focus inside the match dialog and makes the deck inert", async () => {
+    mockFetch({
+      "/api/feed": feed(ZOYA, ROHAN),
+      "/api/swipe": () => json(201, { data: { swipe: { profileId: "zoya", action: "LIKE" }, match: makeMatch(ZOYA) } }),
+    });
+    render(<DiscoverScreen me={ME} />);
+    await userEvent.click(await screen.findByRole("button", { name: "Like Zoya" }));
+    const dialog = await screen.findByRole("dialog");
+    const primary = within(dialog).getByRole("button", { name: "See your matches" });
+    const secondary = within(dialog).getByRole("button", { name: "Keep discovering" });
+    expect(primary).toHaveFocus();
+    await userEvent.tab();
+    expect(secondary).toHaveFocus();
+    await userEvent.tab();
+    expect(primary).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(secondary).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Like Rohan", hidden: true }).closest("[inert]")).not.toBeNull();
+  });
+});
+
 describe("useSwipe", () => {
   it("ignores a second swipe on the same profile while the first is in flight", async () => {
     let resolve!: (r: Response) => void;

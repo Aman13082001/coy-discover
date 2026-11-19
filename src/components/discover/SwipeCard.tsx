@@ -51,7 +51,8 @@ export function SwipeCard({ profile, isTop: isTopProp, onSwipe }: Props) {
       }}
       variants={variants}
       initial={reduceMotion ? { opacity: 0 } : { scale: 0.94, y: 18, opacity: 0 }}
-      animate={isTopProp ? { scale: 1, y: 0, opacity: 1 } : { scale: 0.95, y: 14, opacity: 1 }}
+      // x: 0 also resets a card that is restored (after a failed swipe) while still mid-exit.
+      animate={isTopProp ? { x: 0, scale: 1, y: 0, opacity: 1 } : { x: 0, scale: 0.95, y: 14, opacity: 1 }}
       exit={reduceMotion ? "exitReduced" : "exit"}
       transition={{ type: "spring", stiffness: 320, damping: 30 }}
       aria-hidden={!isTop}

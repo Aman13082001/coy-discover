@@ -13,6 +13,7 @@ export const POST = route(async (request: Request) => {
     return fail(400, "VALIDATION_ERROR", "Request body must be valid JSON.");
   }
   const input = swipeInputSchema.parse(body);
-  const result = await recordSwipe(getCurrentUserId(), input);
-  return ok(result, 201);
+  const { result, created } = await recordSwipe(getCurrentUserId(), input);
+  // 201 for a new swipe; 200 when the identical swipe already existed (idempotent retry).
+  return ok(result, created ? 201 : 200);
 });

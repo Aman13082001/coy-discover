@@ -97,11 +97,29 @@ describe("POST /api/swipe", () => {
   it("matches when the like arrives second from the other side", async () => {
     await callSwipe({ profileId: NEUTRAL[0], action: "LIKE" });
     const result = await recordSwipe(NEUTRAL[0], { profileId: ME, action: "LIKE" });
-    expect(result.match?.profile.id).toBe(ME);
+    expect(result.created).toBe(true);
+    expect(result.result.match?.profile.id).toBe(ME);
     expect((await callMatches()).body.data.matches.map((m: { profile: { id: string } }) => m.profile.id)).toContain(NEUTRAL[0]);
   });
 
-  it("rejects a duplicate swipe with 409 and keeps the original", async () => {
+  it("repeating the identical swipe is idempotent (200) and stores nothing new", async () => {
+    const first = await callSwipe({ profileId: NEUTRAL[0], action: "PASS" });
+    const again = await callSwipe({ profileId: NEUTRAL[0], action: "PASS" });
+    expect(first.status).toBe(201);
+    expect(again.status).toBe(200);
+    expect(again.body).toEqual(first.body);
+    expect(await prisma.swipe.count({ where: { fromId: ME, toId: NEUTRAL[0] } })).toBe(1);
+  });
+
+  it("a retried LIKE after a lost response still returns the match", async () => {
+    const first = await callSwipe({ profileId: LIKED_ME[0], action: "LIKE" });
+    const retry = await callSwipe({ profileId: LIKED_ME[0], action: "LIKE" });
+    expect(retry.status).toBe(200);
+    expect(retry.body.data.match).toEqual(first.body.data.match);
+    expect(await prisma.match.count({ where: { OR: [{ userLowId: ME }, { userHighId: ME }] } })).toBe(1);
+  });
+
+  it("rejects a conflicting second swipe with 409 and keeps the original", async () => {
     await callSwipe({ profileId: NEUTRAL[0], action: "PASS" });
     const again = await callSwipe({ profileId: NEUTRAL[0], action: "LIKE" });
     expect(again.status).toBe(409);
@@ -189,12 +207,16 @@ describe("persistence", () => {
 });
 
 describe("concurrency", () => {
-  it("concurrent duplicate LIKEs store one swipe and at most one match", async () => {
+  it("concurrent duplicate LIKEs store one swipe and exactly one match", async () => {
     const target = LIKED_ME[0];
     const results = await Promise.all(Array.from({ length: 6 }, () => callSwipe({ profileId: target, action: "LIKE" })));
-    const statuses = results.map((r) => r.status).sort();
+    const statuses = results.map((r) => r.status);
     expect(statuses.filter((s) => s === 201)).toHaveLength(1);
-    expect(statuses.filter((s) => s === 409)).toHaveLength(5);
+    expect(statuses.filter((s) => s === 200)).toHaveLength(5);
+    // Every caller learns about the match, and they all see the same one.
+    const matchIds = new Set(results.map((r) => r.body.data.match?.id));
+    expect(matchIds.size).toBe(1);
+    expect([...matchIds][0]).toEqual(expect.any(String));
     expect(await prisma.swipe.count({ where: { fromId: ME, toId: target } })).toBe(1);
     const [low, high] = [ME, target].sort();
     expect(await prisma.match.count({ where: { userLowId: low, userHighId: high } })).toBe(1);

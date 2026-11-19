@@ -33,7 +33,8 @@ export function DiscoverScreen({ me }: { me: PublicProfile }) {
   useEffect(() => {
     if (match || status !== "ready") return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      // e.repeat: holding an arrow key must not mass-swipe through the deck.
+      if (e.repeat || e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === "ArrowRight") swipeTop("LIKE");
       else if (e.key === "ArrowLeft") swipeTop("PASS");
       else return;
@@ -47,7 +48,8 @@ export function DiscoverScreen({ me }: { me: PublicProfile }) {
     <main className="flex flex-1 flex-col">
       <PageHeader title="Discover" subtitle="Like or pass. They only find out if it's mutual." width="narrow" />
 
-      <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col px-4 pb-5 lg:flex-none lg:pb-10 lg:pt-2">
+      {/* inert while the match dialog is open: no tabbing to (or clicking) the deck behind it */}
+      <div inert={match ? true : undefined} className="mx-auto flex w-full max-w-[420px] flex-1 flex-col px-4 pb-5 lg:flex-none lg:pb-10 lg:pt-2">
         <div className="relative min-h-[300px] flex-1 lg:h-[600px] lg:flex-none">
           <SwipeFeedbackToast feedback={feedback} />
 
@@ -88,6 +90,7 @@ export function DiscoverScreen({ me }: { me: PublicProfile }) {
       <AnimatePresence>
         {match && (
           <MatchModal
+            key={match.id}
             me={me}
             match={match}
             onKeepSwiping={dismissMatch}
