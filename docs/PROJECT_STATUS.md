@@ -17,7 +17,7 @@ Part B (Discover app) is **complete and verified locally**. Part A is written, b
 | 13 Independent security/privacy review: no leaks found; 5 bugs found and fixed (see log) | Done |
 | 14 Part A analysis | Done (public pages only) |
 | 15 Documentation | Done |
-| 16 GitHub | See the git section below |
+| 16 GitHub | Done: https://github.com/Aman13082001/coy-discover (public, branch `master`). A fresh clone was verified: `npm ci` → `npm run setup` → 80 tests pass |
 | 17 Deployment | **Not done**: no hosting credentials (no Vercel CLI/login, no hosted Postgres) |
 
 ## Working (verified)
@@ -37,6 +37,7 @@ Nothing known.
 - Feed isn't paginated (31 profiles).
 - The original assignment PDF isn't in the repo (it was a chat attachment). Copy it to `docs/assignment.pdf`.
 - Timing side channels aren't measured (content and shape are tested).
+- `npm audit` still reports two high-severity advisories that only major upgrades fix, and that don't touch runtime request data: `postcss` inside Next 15 (build-time processing of our own CSS; fixed in Next 16) and `deepmerge-ts` in the Prisma 6 CLI config loader (dev tooling; fixed in Prisma 7). The `zod` advisory was fixed by upgrading to Zod 4.
 
 ## Immediate next action
 1. Explore Coy yourself and complete the Part A checklist.

@@ -10,7 +10,7 @@ You are continuing the **Coy SDE intern assignment**. The repo is `coy-discover/
 
 **State**: Part B is complete and verified. Part A is written from public pages only, with a checklist for the human to complete after exploring the logged-in app. Not deployed.
 
-**Stack**: Next.js 15 App Router + Route Handlers, React 19, TS, Tailwind 4, Framer Motion, Prisma 6 + SQLite, Zod, Vitest 5 + RTL, Playwright.
+**Stack**: Next.js 15 App Router + Route Handlers, React 19, TS, Tailwind 4, Framer Motion, Prisma 6 + SQLite, Zod 4, Vitest 5 + RTL, Playwright. GitHub: https://github.com/Aman13082001/coy-discover (public, `master`).
 
 **Important files**
 - `prisma/schema.prisma`, `prisma/migrations/*/migration.sql` (hand-added CHECK constraints), `prisma/seed-data.ts`, `prisma/seed-lib.ts`

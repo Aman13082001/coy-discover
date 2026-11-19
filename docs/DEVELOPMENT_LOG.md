@@ -6,7 +6,7 @@
 - Workspace was empty. Node 24.14, npm 11, git 2.53, gh 2.105 (authenticated). No Vercel CLI.
 - The assignment PDF was a chat attachment and wasn't on disk, so it's transcribed in `docs/assignment.md`.
 - `create-next-app@15` → Next 15.5, React 19.1, Tailwind 4, ESLint 9, TypeScript 5.9.
-- Installed: prisma/@prisma/client 6.19, zod 3.25, framer-motion 12, lucide-react. Dev: vitest 5.1 (the latest jest-dom requires it), @vitejs/plugin-react, jsdom, Testing Library, tsx, @playwright/test 1.65 (+ chromium), and @types/node 24 (a vitest 5 peer).
+- Installed: prisma/@prisma/client 6.19, zod 3.25 (later 4.6.7), framer-motion 12, lucide-react. Dev: vitest 5.1 (the latest jest-dom requires it), @vitejs/plugin-react, jsdom, Testing Library, tsx, @playwright/test 1.65 (+ chromium), and @types/node 24 (a vitest 5 peer).
 
 ### Database
 - Schema: Profile / Swipe / Match. Generated the migration with `--create-only`, then hand-added CHECK constraints (`fromId <> toId`, `action IN (...)`, `userLowId < userHighId`, `age >= 18`).
@@ -34,6 +34,15 @@
   4. On PostgreSQL under READ COMMITTED, simultaneous mutual likes could miss each other. Fix: `Serializable` transaction plus P2034 retry. Docs corrected.
   5. A card restored during its exit animation stayed off-screen (verified: 271 px off). Fix: `x: 0` in the animate target, plus an E2E test that fails without it.
   - Also: tightened the privacy key scan to an allow-list over full swipe bodies, compared 200/409 bodies for liker vs non-liker, and moved `getProfile` to `services/profile.ts`.
+
+### Dependency audit
+- `npm audit` reported zod <4.6.6 (memory exhaustion on oversized constrained collections). Upgraded to **zod 4.6.7** and moved the schema to `z.strictObject` and `{ error }` messages. Messages and behaviour are unchanged, and all tests pass.
+- Left as-is, documented in PROJECT_STATUS: postcss inside Next 15 (needs Next 16) and deepmerge-ts in the Prisma 6 CLI (needs Prisma 7). Both are major upgrades, and neither path processes request data.
+
+### Publishing
+- Created a public GitHub repo with `gh repo create coy-discover --public --source . --push` → https://github.com/Aman13082001/coy-discover
+- Before pushing, scanned tracked files for secrets and personal data (none found; `.env` and `*.db` are ignored).
+- Verified a fresh clone: `npm ci`, `npm run setup`, `npx vitest run` → 80 passed.
 
 ### Commands (final verification)
 ```
