@@ -31,6 +31,10 @@ cp .env.example .env        # DATABASE_URL="file:./dev.db"
 npm run setup               # apply migrations + seed demo data
 npm run dev                 # http://localhost:3000
 ```
+On Windows PowerShell 5.1 (no `&&`), use:
+```powershell
+npm install; Copy-Item .env.example .env; npm run setup; npm run dev
+```
 Open **Discover**. To see a match quickly, pass the first five profiles and **like Zoya** (6th), who has already liked the demo user. 8 seeded profiles have liked the demo user: meera, zoya, naina, aanya, diya, kabir, mira, farhan. To start over, run `npm run db:seed`.
 
 ## Scripts
