@@ -3,7 +3,7 @@
 _Last updated: 2026-11-19_
 
 ## Overall
-Part B (Discover app) is **complete and verified locally**. Part A is written, but the logged-in Coy flows were **not explored** (they need the candidate's own phone number). See the checklist in [COY_PRODUCT_ANALYSIS.md](COY_PRODUCT_ANALYSIS.md).
+Part B (Discover app) is **complete and verified locally**. Part A: the candidate has logged in and the home screen is documented from their screenshots; adding a crush, email verification, the invite link and the extra-slots screen are still to be written up. See the checklist in [COY_PRODUCT_ANALYSIS.md](COY_PRODUCT_ANALYSIS.md).
 
 | Phase | Status |
 |---|---|

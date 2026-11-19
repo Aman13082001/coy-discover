@@ -14,13 +14,31 @@ Read this section first. This document keeps what I verified separate from what 
 | List entries deleted after 180 days unless matched; login codes deleted within a day; sessions last 60 days | **Verified** (stated policy) | /privacy |
 | An email is optional and "lets people who have it find you" | **Verified** (stated policy) | /privacy |
 | /stop page says messaging has not started yet, which contradicts the present-tense copy on the home page | **Verified** (observation) | getcoy.com/stop |
-| Phone OTP login screen and flow | **Not verified** | app.getcoy.com is a JS-only shell to automated fetching, and OTP needs a real phone number |
-| Adding a crush (UI), email verification, invite link, extra-slots screen | **Not verified** | Requires a logged-in account |
+| Phone OTP login | **Completed by the candidate** (logged in) | Candidate's own account. Details of the OTP screen are not yet written up |
+| Logged-in home screen (see below) | **Verified** | Candidate's screenshots, 2026-11-19 |
+| Adding a crush (form), email verification, invite link details, extra-slots screen | **Not yet verified** | Needs the next screens |
 
-I did not sign up, did not enter a phone number, and did not purchase anything.
+The automated part of this analysis read public pages only: no sign-up, no phone number, no purchase. The logged-in observations come from the candidate's own account.
+
+### Logged-in home screen (verified from screenshots)
+- **Header**: the `coy.` wordmark and a settings gear (top right). Settings is the likely home of email verification.
+- **Hero card**: "Find out if your crush likes you back", with three steps: *Add someone you like, by number or email* → *We tell them someone likes them, not who* → *If they add you back, it's a match*. A primary **Add your crushes** button.
+- **Your crushes 0/3**: one highlighted **Add a crush** row and two greyed **Free slot** rows. The slot limit is visible from the first screen.
+- **Get more slots**: "Add more people to your list" (yellow). This is the paid route, and it sits directly under the free slots.
+- Helper text: *"They get an anonymous heads-up right away. Never who."*
+- **How Coy works**: "Follow one crush from add to match, in 6 quick taps", a short interactive walkthrough.
+- **Get a slot free**: a collapsible card showing "0 of 3 joined" with three empty circles. This is the invite-3-friends route.
+
+**Observations**
+1. **The slot economy is front and centre.** "0/3", two empty slots, and "Get more slots" all appear before you've added anyone. Fine for clarity, but it puts the paywall before the user has had any value.
+2. **The paid option is shown above the free one.** "Get more slots" (paid) appears before "Get a slot free" (invite), and the free route is collapsed by default.
+3. **Copy is inconsistent about timing.** The app says the heads-up goes out "right away". The public site says at most one message a week, never at night, and the /stop page says messaging hasn't started. Users may not know what the crush actually receives, or when.
+4. **Two labels for the same thing.** The first empty row says "Add a crush" and the others say "Free slot". It's a minor wording inconsistency.
+
+Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spending" a slot).
 
 ### Checklist: complete after personally exploring Coy
-- [ ] Phone OTP login: note how long the code takes to arrive, the resend and retry behaviour, and what errors look like.
+- [x] Phone OTP login: completed (logged in). Optional: note the code delivery time and the resend behaviour.
 - [ ] Adding a crush: is it by phone or email, what name/label is asked for, and what confirmation does "adding is final" get?
 - [ ] Email verification: when is it asked for, how is the code or link delivered, and is it explained that it makes you findable?
 - [ ] Invite link: how it is shared, what the invitee sees, and how progress toward a free slot is shown.
