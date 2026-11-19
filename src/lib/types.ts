@@ -33,7 +33,6 @@ export interface SwipeResponse {
 }
 
 export interface MatchesResponse {
-  me: PublicProfile;
   matches: MatchSummary[];
 }
 

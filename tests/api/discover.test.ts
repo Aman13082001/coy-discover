@@ -147,8 +147,7 @@ describe("GET /api/matches", () => {
   it("is empty for a fresh user", async () => {
     const { status, body } = await callMatches();
     expect(status).toBe(200);
-    expect(body.data.matches).toEqual([]);
-    expect(body.data.me.id).toBe(ME);
+    expect(body).toEqual({ data: { matches: [] } });
   });
 
   it("returns only mutual matches, not one-sided likes", async () => {
