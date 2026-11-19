@@ -1,0 +1,57 @@
+// Coy Discover data model.
+// SQLite locally; see docs/DATABASE.md for the PostgreSQL switch used in deployment.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id        String   @id
+  name      String
+  age       Int
+  photoUrl  String
+  bio       String
+  location  String
+  /// JSON-encoded string[] (SQLite has no scalar lists)
+  interests String
+  createdAt DateTime @default(now())
+
+  swipesGiven    Swipe[] @relation("SwipeFrom")
+  swipesReceived Swipe[] @relation("SwipeTo")
+  matchesAsLow   Match[] @relation("MatchLow")
+  matchesAsHigh  Match[] @relation("MatchHigh")
+}
+
+/// One row per (swiper, target). action is 'LIKE' or 'PASS' (enforced by a CHECK constraint).
+model Swipe {
+  id        String   @id @default(cuid())
+  fromId    String
+  toId      String
+  action    String
+  createdAt DateTime @default(now())
+
+  from Profile @relation("SwipeFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  to   Profile @relation("SwipeTo", fields: [toId], references: [id], onDelete: Cascade)
+
+  @@unique([fromId, toId])
+  @@index([toId, action])
+}
+
+/// A confirmed mutual like. The pair is stored in canonical order (userLowId < userHighId).
+model Match {
+  id         String   @id @default(cuid())
+  userLowId  String
+  userHighId String
+  createdAt  DateTime @default(now())
+
+  userLow  Profile @relation("MatchLow", fields: [userLowId], references: [id], onDelete: Cascade)
+  userHigh Profile @relation("MatchHigh", fields: [userHighId], references: [id], onDelete: Cascade)
+
+  @@unique([userLowId, userHighId])
+  @@index([userHighId])
+}
