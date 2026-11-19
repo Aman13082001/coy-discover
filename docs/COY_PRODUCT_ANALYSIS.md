@@ -14,9 +14,11 @@ Read this section first. This document keeps what I verified separate from what 
 | List entries deleted after 180 days unless matched; login codes deleted within a day; sessions last 60 days | **Verified** (stated policy) | /privacy |
 | An email is optional and "lets people who have it find you" | **Verified** (stated policy) | /privacy |
 | /stop page says messaging has not started yet, which contradicts the present-tense copy on the home page | **Verified** (observation) | getcoy.com/stop |
-| Phone OTP login | **Completed by the candidate** (logged in) | Candidate's own account. Details of the OTP screen are not yet written up |
-| Logged-in home screen (see below) | **Verified** | Candidate's screenshots, 2026-11-19 |
-| Adding a crush (form), email verification, invite link details, extra-slots screen | **Not yet verified** | Needs the next screens |
+| Phone OTP login (number entry screen) | **Verified** | Candidate's screenshots, 2026-11-19 |
+| Logged-in home screen | **Verified** | Candidate's screenshots, 2026-11-19 |
+| Adding a crush (form) | **Verified** (viewed; nothing submitted) | Candidate's screenshots, 2026-11-19 |
+| Invite link ("Get a slot free") | **Verified** | Candidate's screenshots, 2026-11-19 |
+| Email verification, extra-slots screen | **Not yet verified** | Needs the settings and "Get more slots" screens |
 
 The automated part of this analysis read public pages only: no sign-up, no phone number, no purchase. The logged-in observations come from the candidate's own account.
 
@@ -37,11 +39,35 @@ The automated part of this analysis read public pages only: no sign-up, no phone
 
 Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spending" a slot).
 
+### Login screen (verified)
+- URL `app.getcoy.com/login?next=/app`. Heading **"What's your number?"**, with the line *"We'll text you a code. It's also how your crushes find you."*
+- A country-code picker that defaults to **+91** and a phone field.
+- A **"Have an invite code?"** link. This is where an invited friend redeems the code from "Get a slot free".
+- A required checkbox: *"I'm 18 or older and agree to the Terms and Privacy Policy"*, then **Send code**.
+- **Observation**: the login copy openly says your number is how crushes find you, which sets privacy expectations well. Age is self-declared with a checkbox, and there's no other check.
+
+### Add a crush (verified; nothing submitted)
+- A modal with a **Name** field (placeholder "Riya from 3rd floor"), captioned *"Only you see this."*
+- A **Phone number** field (+91 default), captioned *"It takes one slot."*, and an **"Add by email"** link that switches the field to email.
+- **Add crush** stays disabled until the input is valid.
+- Footer: *"They get an anonymous heads-up right away. Adding is final: you can't remove someone once they're on your list."*
+
+**Observations**
+5. **The app and the Terms disagree about removing someone.** The app says "you can't remove someone once they're on your list". The Terms describe removed entries keeping their slot used for 30 days, which implies removal exists. One of them is out of date.
+6. **One identifier per crush in the form.** You add by phone *or* switch to email. The website says "by phone number, email or both". If someone signed up with an email you don't have, adding them by phone won't match. Being able to enter both would improve match rates.
+7. **The "final" warning comes late.** "Adding is final" is in small grey text under the button. Since it can't be undone and it messages a real person, it deserves to be more prominent (a confirm step or bolder copy).
+8. **You must already have their contact details.** The form only accepts a phone number or email, which confirms the core limitation Feature 1 addresses.
+
+### Invite link: "Get a slot free" (verified)
+- Expanded, the card reads: *"Invite 3 friends. When they join and add a crush, you get a free slot."*
+- It shows a personal invite code with a copy button, a **Copy link** action, and a primary **Share link** button. Progress shows as three circles: "0 of 3 joined".
+- **Observation**: the reward needs friends to *join and add a crush*, not just sign up. That rewards real activity rather than empty sign-ups, which is a sound incentive. Progress shows a count but not *which* friends joined, which is consistent with Coy's privacy stance.
+
 ### Checklist: complete after personally exploring Coy
 - [x] Phone OTP login: completed (logged in). Optional: note the code delivery time and the resend behaviour.
-- [ ] Adding a crush: is it by phone or email, what name/label is asked for, and what confirmation does "adding is final" get?
+- [x] Adding a crush (viewed, not submitted): is it by phone or email, what name/label is asked for, and what confirmation does "adding is final" get?
 - [ ] Email verification: when is it asked for, how is the code or link delivered, and is it explained that it makes you findable?
-- [ ] Invite link: how it is shared, what the invitee sees, and how progress toward a free slot is shown.
+- [x] Invite link: how it is shared, what the invitee sees, and how progress toward a free slot is shown.
 - [ ] Extra-slots screen: look at the price presentation, the payment hand-off, and anything confusing. **Do not buy.**
 - [ ] Revisit the two proposals below and keep, adjust or replace them based on what you saw.
 
@@ -50,6 +76,8 @@ Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spend
 **User problem.** Coy matches on a phone number or email you already have. Many real crushes are a classmate, someone from another team, or someone in the same hostel, people you see often but whose number you don't have. Asking for the number is the very awkwardness Coy exists to avoid.
 
 **Why it's required.** Today the product only works for crushes you already have contact details for, which caps both matches and growth. Coy already collects an optional email "so people who have it can find you". A verified college or work email domain is a natural, privacy-preserving next step.
+
+**Evidence from the app.** The Add a crush form accepts only a phone number or an email (observation 8), and the login screen says your number is "how your crushes find you". If you don't have someone's contact details, there is no way to add them.
 
 **Flow.**
 1. In settings, a user verifies a college or work email (e.g. `@iitb.ac.in`). This joins them to the "IIT Bombay" circle.
@@ -70,6 +98,8 @@ Both observations 1 and 2 support Feature 2 below (reducing anxiety about "spend
 **User problem.** Slots are scarce (3 free) and "adding is final". People hesitate to "spend" a slot, and unreturned crushes keep occupying slots for up to 180 days.
 
 **Why it's required.** Scarcity is good for seriousness, but anxiety about wasting a slot suppresses the core action (adding). That pushes people either to churn or to a paywall before they've had a match. A built-in, predictable expiry gives back control without opening the add/remove "probe" loophole that "adding is final" exists to prevent.
+
+**Evidence from the app.** The home screen leads with "0/3", empty slots and a paid "Get more slots" card (observations 1 and 2), and the add form warns "Adding is final: you can't remove someone" (observation 7). Every slot feels high-stakes.
 
 **Flow.**
 1. When adding a crush, choose a duration: 30, 60 or 90 days (default 90).
