@@ -119,3 +119,17 @@ test("no horizontal overflow on Discover and Matches", async ({ page }) => {
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
 });
+
+test("360×640: card and both action buttons fit above the tab bar", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "small-phone check runs once");
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.goto("/discover");
+  await expectTopCard(page, "Pooja");
+  const nav = (await page.locator("nav[aria-label='Primary']").filter({ visible: true }).boundingBox())!;
+  for (const name of ["Like Pooja", "Pass on Pooja"]) {
+    const btn = (await page.getByRole("button", { name }).boundingBox())!;
+    expect(btn.y + btn.height, name).toBeLessThanOrEqual(nav.y);
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

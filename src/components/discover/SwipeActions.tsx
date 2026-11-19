@@ -9,7 +9,7 @@ interface Props {
 export function SwipeActions({ profile, onSwipe }: Props) {
   const disabled = !profile;
   return (
-    <div className="flex flex-col items-center gap-3 pt-5">
+    <div className="flex flex-col items-center gap-3 pt-4 [@media(min-height:760px)]:pt-5">
       <div className="flex items-center justify-center gap-6">
         <button
           type="button"

@@ -33,9 +33,15 @@ async function shoot(viewport, prefix) {
   await page.mouse.up();
   await page.waitForTimeout(500);
 
+  // Create a few real mutual matches (these seeded profiles have liked the demo user). 409s are fine.
+  for (const profileId of ["zoya", "aanya", "kabir", "mira", "farhan"]) {
+    await page.request.post(`${base}/api/swipe`, { data: { profileId, action: "LIKE" } });
+  }
+
   await page.goto(`${base}/matches`);
-  await page.waitForLoadState("networkidle");
-  await page.waitForTimeout(400);
+  await page.getByRole("list", { name: "Your matches" }).waitFor();
+  await page.waitForFunction(() => [...document.images].every((img) => img.complete && img.naturalWidth > 0));
+  await page.waitForTimeout(300);
   await page.screenshot({ path: `${out}/${prefix}-matches.png` });
   await page.close();
 }

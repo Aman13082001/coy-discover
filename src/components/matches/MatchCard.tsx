@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 import type { MatchSummary } from "@/lib/types";
 import { ProfilePhoto } from "@/components/profile/ProfilePhoto";
 
@@ -19,7 +19,8 @@ export function MatchCard({ match }: { match: MatchSummary }) {
           <MapPin className="size-3 shrink-0" strokeWidth={2.5} aria-hidden />
           <span className="truncate">{profile.location}</span>
         </p>
-        <p className="mt-2.5 text-[12px] font-semibold uppercase tracking-wider text-coral">
+        <p className="mt-2.5 flex items-center gap-1 text-[12px] font-semibold text-ink-faint">
+          <Heart className="size-3 shrink-0 fill-coral text-coral" strokeWidth={0} aria-hidden />
           Matched <time dateTime={match.createdAt}>{dateFormat.format(new Date(match.createdAt))}</time>
         </p>
       </div>
